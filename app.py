@@ -14,7 +14,7 @@ from advanced_rag.retrieval import RetrievalEngine
 
 st.set_page_config(
     page_title="RAGPilot",
-    page_icon="🚀",
+    page_icon="R",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -25,7 +25,7 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap');
 
     /* ── Design tokens ─────────────────────────────────────────────── */
     :root {
@@ -46,11 +46,11 @@ st.markdown(
 
     /* ── Global typography ─────────────────────────────────────────── */
     html, body, [class*="st-"] {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
         color: var(--text-primary) !important;
     }
     code, .stCodeBlock, pre, .stMetricLabel {
-        font-family: "JetBrains Mono", "Fira Code", monospace !important;
+        font-family: "Geist Mono", "Fira Code", monospace !important;
     }
 
     /* ── Layout ────────────────────────────────────────────────────── */
@@ -71,15 +71,18 @@ st.markdown(
 
     /* ── Headings ──────────────────────────────────────────────────── */
     h1 {
+        font-family: "Geist", sans-serif !important;
         font-weight: 800 !important;
-        letter-spacing: -0.03em;
-        font-size: clamp(2.2rem, 5vw, 3.6rem) !important;
-        line-height: 1.1 !important;
+        letter-spacing: -0.035em !important;
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem) !important;
+        line-height: 1.15 !important;
         background: linear-gradient(135deg, #E6EDF3 0%, #A5A0FF 50%, #6C63FF 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 0.2rem !important;
+        margin-bottom: 0.25rem !important;
+        padding-bottom: 0.1rem !important;
+        overflow: visible !important;
     }
     h2 {
         font-weight: 700 !important;
@@ -93,7 +96,7 @@ st.markdown(
 
     /* ── Eyebrow label ─────────────────────────────────────────────── */
     .eyebrow {
-        font-family: "JetBrains Mono", monospace;
+        font-family: "Geist Mono", monospace;
         font-size: 0.72rem;
         font-weight: 500;
         text-transform: uppercase;
@@ -378,7 +381,7 @@ if "last_trace" not in st.session_state:
 # ---------------------------------------------------------------------------
 with st.sidebar:
     st.markdown(
-        '<div class="sidebar-brand">🚀 RAGPilot</div>',
+        '<div class="sidebar-brand">RAGPilot</div>',
         unsafe_allow_html=True,
     )
     st.header("Research console")
@@ -395,7 +398,7 @@ with st.sidebar:
 def render_sources(sources: list[dict]) -> None:
     if not sources:
         return
-    with st.expander(f"📚 Evidence — {len(sources)} sources", expanded=False):
+    with st.expander(f"Evidence — {len(sources)} sources", expanded=False):
         for source in sources:
             location = f" · p. {source['page']}" if source["page"] else ""
             heading = f" · {source['heading']}" if source["heading"] else ""
@@ -429,25 +432,25 @@ if page == "Ask":
             st.markdown(question)
         with st.chat_message("assistant"):
             if not st.session_state.api_key:
-                answer = "⚠️ Add an LLM API key in **Settings** before asking a question."
+                answer = "Add an LLM API key in Settings before asking a question."
                 st.warning(answer)
                 sources = []
             elif ready_count == 0:
                 answer = (
-                    "📂 No indexed documents are available. "
-                    "Upload documents in the **Documents** tab and wait for indexing."
+                    "No indexed documents are available. "
+                    "Upload documents in the Documents tab and wait for indexing."
                 )
                 st.warning(answer)
                 sources = []
             else:
                 try:
-                    with st.status("🔍 Retrieving evidence...", expanded=False) as status:
+                    with st.status("Retrieving evidence...", expanded=False) as status:
                         trace = retrieval.retrieve(question)
                         context, included = retrieval.build_context(trace.final)
                         st.session_state.last_trace = trace
                         status.update(
                             label=(
-                                f"✅ Selected {len(included)} sources in "
+                                f"Selected {len(included)} sources in "
                                 f"{trace.timings_ms['total']:.0f} ms"
                             ),
                             state="complete",
@@ -509,16 +512,16 @@ elif page == "Documents":
             "png", "jpg", "jpeg", "tiff",
         ],
     )
-    if st.button("⬆️ Queue files", type="primary", disabled=not uploaded_files):
+    if st.button("Queue files", type="primary", disabled=not uploaded_files):
         added = duplicates = 0
-        progress = st.progress(0, text="Persisting uploads…")
+        progress = st.progress(0, text="Persisting uploads")
         for index, upload in enumerate(uploaded_files):
             _, duplicate = ingestion.enqueue_bytes(upload.name, upload.getvalue())
             duplicates += int(duplicate)
             added += int(not duplicate)
             progress.progress((index + 1) / len(uploaded_files), text=upload.name)
         progress.empty()
-        st.success(f"Queued **{added}** files · skipped **{duplicates}** duplicates.")
+        st.success(f"Queued {added} files, skipped {duplicates} duplicates.")
         time.sleep(0.4)
         st.rerun()
 
@@ -536,30 +539,30 @@ elif page == "Documents":
         status_label = document.status.upper() if isinstance(document.status, str) else str(document.status).split(".")[-1].upper()
         with st.container(border=True):
             info, state, actions = st.columns([5, 2, 2])
-            info.markdown(f"**📄 {document.filename}**")
+            info.markdown(f"**{document.filename}**")
             info.caption(f"{document.size_bytes / 1024:.1f} KB · {document.chunk_count} chunks")
             state.markdown(
                 f"<span class='status-badge {badge_class}'>{status_label}</span>",
                 unsafe_allow_html=True,
             )
             if document.error:
-                state.caption(f"❌ {document.error}")
+                state.caption(document.error)
             with actions:
                 if document.status == DocumentStatus.FAILED and st.button(
-                    "🔄 Retry", key=f"retry-{document.id}", use_container_width=True
+                    "Retry", key=f"retry-{document.id}", use_container_width=True
                 ):
                     database.retry_document(document.id)
                     st.rerun()
                 if st.button(
-                    "🗑️ Delete", key=f"delete-{document.id}", use_container_width=True
+                    "Delete", key=f"delete-{document.id}", use_container_width=True
                 ):
                     ingestion.delete_document(document.id)
                     st.rerun()
     if any(
         doc.status in {DocumentStatus.QUEUED, DocumentStatus.PROCESSING} for doc in documents
     ):
-        st.caption("⏳ Indexing is active. Refresh to update status.")
-        if st.button("🔄 Refresh status"):
+        st.caption("Indexing is active. Refresh to update status.")
+        if st.button("Refresh status"):
             st.rerun()
 
 # ---------------------------------------------------------------------------
@@ -572,7 +575,7 @@ elif page == "Retrieval lab":
     st.title("Inspect every ranking decision.")
     st.caption("Run retrieval without calling the LLM to debug your pipeline.")
     debug_query = st.text_input("Query", placeholder="Enter a search query…")
-    if st.button("🔍 Run retrieval", type="primary", disabled=not debug_query):
+    if st.button("Run retrieval", type="primary", disabled=not debug_query):
         try:
             st.session_state.last_trace = retrieval.retrieve(debug_query)
         except Exception as exc:
@@ -618,37 +621,37 @@ else:
     )
     st.title("Models and credentials.")
     st.warning(
-        "🔒 Credentials entered here remain in this Streamlit session and are **not** persisted."
+        "Credentials entered here remain in this Streamlit session and are not persisted."
     )
 
     col1, col2 = st.columns(2)
     with col1:
         st.session_state.api_key = st.text_input(
-            "🔑 LLM API key", value=st.session_state.api_key, type="password"
+            "LLM API key", value=st.session_state.api_key, type="password"
         )
         provider_options = ["auto", "anthropic", "openai"]
         current_provider = st.session_state.get("llm_provider", settings.llm_provider)
         st.session_state.llm_provider = st.selectbox(
-            "🏢 LLM provider",
+            "LLM provider",
             provider_options,
             index=provider_options.index(current_provider),
             help="Auto detects Anthropic keys by their `sk-ant-` prefix.",
         )
     with col2:
         st.session_state.llm_model = st.text_input(
-            "🤖 LLM model",
+            "LLM model",
             value=st.session_state.get("llm_model", settings.llm_model),
         )
         st.session_state.llm_base_url = (
             st.text_input(
-                "🌐 Custom API base URL (optional)",
+                "Custom API base URL (optional)",
                 value=st.session_state.get("llm_base_url", settings.llm_base_url) or "",
             )
             or None
         )
 
     st.divider()
-    st.subheader("⚙️ Local retrieval models")
+    st.subheader("Local retrieval models")
     st.code(
         f"Embedding:  {settings.embedding_model}\n"
         f"Reranker:   {settings.reranker_model}\n"
