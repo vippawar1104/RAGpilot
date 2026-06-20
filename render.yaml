@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ragpilot
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: starter # Note: Render persistent disks require a paid instance type (Starter starts at $7/month)
+    disk:
+      name: ragpilot-data
+      mountPath: /app/data
+      sizeGB: 10
+    envVars:
+      - key: RAG_LLM_PROVIDER
+        sync: false # Prompts you to enter the LLM provider (e.g. anthropic, openai)
+      - key: RAG_LLM_API_KEY
+        sync: false # Prompts you to enter your API key
+      - key: RAG_DEVICE
+        value: cpu
