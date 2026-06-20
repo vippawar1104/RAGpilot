@@ -17,20 +17,20 @@ ENV PYTHONUNBUFFERED=1 \
     HF_HOME=/app/data/huggingface \
     RAG_DEVICE=cpu
 
-# Copy python packaging configuration
-COPY pyproject.toml .
-
-# Install dependencies and local package
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -e .
-
-# Force headless OpenCV to avoid libGL/OpenGL dependency issues
-RUN pip uninstall -y opencv-python opencv-python-headless && \
-    pip install --no-cache-dir opencv-python-headless
+# Copy python packaging configuration and documentation
+COPY pyproject.toml README.md ./
 
 # Copy application source code
 COPY src/ src/
 COPY app.py .
+
+# Install dependencies and local package
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir .
+
+# Force headless OpenCV to avoid libGL/OpenGL dependency issues
+RUN pip uninstall -y opencv-python opencv-python-headless && \
+    pip install --no-cache-dir opencv-python-headless
 
 # Expose Streamlit default port
 EXPOSE 8501
