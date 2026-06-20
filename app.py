@@ -23,8 +23,8 @@ st.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,700&display=swap');
-    :root { --ink:#1d2925; --rust:#b64c2a; --paper:#f5f0e7; --sage:#687d68; }
-    html, body, [class*="st-"] { font-family: "Newsreader", Georgia, serif; }
+    :root { --ink:#333333; --rust:#d4af37; --paper:#ffffff; --sage:#e8dcb8; }
+    html, body, [class*="st-"] { font-family: "Newsreader", Georgia, serif; color: var(--ink); background-color: var(--paper); }
     code, .stMetricLabel { font-family: "DM Mono", monospace !important; }
     .block-container { max-width: 1480px; padding-top: 2rem; }
     h1 {
@@ -33,20 +33,20 @@ st.markdown(
       line-height:.88;
     }
     h2 { letter-spacing: -0.025em; }
-    [data-testid="stSidebar"] { border-right: 1px solid rgba(29,41,37,.18); }
-    [data-testid="stChatMessage"] { border: 1px solid rgba(29,41,37,.14); border-radius: 2px; }
+    [data-testid="stSidebar"] { border-right: 1px solid rgba(212,175,55,.3); background-color: #faf8f5; }
+    [data-testid="stChatMessage"] { border: 1px solid rgba(212,175,55,.3); border-radius: 4px; background-color: #ffffff; }
     .eyebrow {
       font-family:"DM Mono",monospace;
       text-transform:uppercase;
       letter-spacing:.12em;
       color:var(--rust);
     }
-    .status-ready { color:#3f6848; }
+    .status-ready { color:#d4af37; }
     .source-card {
       border-left:3px solid var(--rust);
       padding:.65rem 1rem;
       margin:.45rem 0;
-      background:rgba(255,255,255,.28);
+      background:rgba(212,175,55,.05);
     }
     </style>
     """,
@@ -115,7 +115,6 @@ def render_sources(sources: list[dict]) -> None:
 
 
 if page == "Ask":
-    st.markdown('<div class="eyebrow">Evidence-first answers</div>', unsafe_allow_html=True)
     st.title("Ask the archive.")
     st.caption("Hybrid retrieval finds candidates; a cross-encoder decides what reaches the model.")
 
