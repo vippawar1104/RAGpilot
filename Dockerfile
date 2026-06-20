@@ -38,5 +38,5 @@ EXPOSE 8501
 # Create the data directory for persistent mounting
 RUN mkdir -p /app/data
 
-# Run Streamlit
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Run Streamlit (Using shell form to evaluate dynamic PORT variable)
+CMD sh -c "streamlit run app.py --server.port=${PORT:-8501} --server.address=0.0.0.0"
